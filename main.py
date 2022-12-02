@@ -2,6 +2,7 @@ import time
 from machine import Pin
 from grove_lcd import Grove_RGB_LCD
 from dht11 import DHT11
+from base64 import b64encode
 
 lcd = Grove_RGB_LCD(16, 2, 0)
 
