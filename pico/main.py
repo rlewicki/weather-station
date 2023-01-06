@@ -4,6 +4,7 @@ from grove_lcd import Grove_RGB_LCD
 from dht11 import DHT11
 from base64 import b64encode
 import network
+import ntptime
 
 def http_get(url):
     import socket
@@ -46,6 +47,16 @@ wlan.connect(ssid, password)
 while not wlan.isconnected():
     time.sleep(1)
 print(wlan.ifconfig())
+
+ntptime.settime()
+current_time = time.localtime()
+print("{}:{}:{}, {}/{}/{}".format(
+    current_time[3] + 1, 
+    current_time[4], 
+    current_time[5], 
+    current_time[2], 
+    current_time[1], 
+    current_time[0]))
 
 degree_char = bytearray(0)
 degree_char.append(0b00010)
