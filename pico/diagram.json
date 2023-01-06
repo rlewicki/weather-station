@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-breadboard-half", "id": "bb1", "top": 160.2, "left": -54.8, "attrs": {} },
+    { "type": "wokwi-pi-pico", "id": "pico", "top": 148.58, "left": -219.87, "attrs": {} },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd1",
+      "top": -25.47,
+      "left": -162.93,
+      "attrs": { "pins": "i2c" }
+    },
+    { "type": "wokwi-dht22", "id": "dht1", "top": 11.37, "left": 181.68, "attrs": {} }
+  ],
+  "connections": [
+    [ "pico:GP0", "$serialMonitor:RX", "", [] ],
+    [ "pico:GP1", "$serialMonitor:TX", "", [] ],
+    [ "pico:GND.8", "bb1:tn.1", "black", [ "h0" ] ],
+    [ "pico:3V3", "bb1:tp.1", "red", [ "h43.22", "v-33.71" ] ],
+    [ "pico:GP28", "dht1:SDA", "white", [ "h73.22", "v-78.24", "h280.83" ] ],
+    [ "bb1:tp.20", "dht1:VCC", "red", [ "v0" ] ],
+    [ "dht1:GND", "bb1:tn.23", "black", [ "v0" ] ],
+    [ "lcd1:SDA", "pico:GP0", "white", [ "h-83.05", "v135.8" ] ],
+    [ "lcd1:SCL", "pico:GP1", "gold", [ "h-92.38", "v135.9" ] ],
+    [ "pico:VBUS", "lcd1:VCC", "red", [ "v-19.31", "h-27.44", "v-125.99" ] ],
+    [ "bb1:tn.2", "lcd1:GND", "black", [ "v-52.48", "h-172.78", "v-123.49" ] ]
+  ],
+  "dependencies": {}
+}
