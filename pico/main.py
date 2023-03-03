@@ -20,6 +20,14 @@ def http_get(url):
         else:
             break
     s.close()
+    
+should_display_time = False
+
+def switch_display_callback(pin):
+    global should_display_time
+    should_display_time = not should_display_time
+
+print("Booting up")
 
 lcd = Grove_RGB_LCD(16, 2, 0)
 lcd.home()
@@ -69,18 +77,29 @@ degree_char.append(0b00000)
 degree_char.append(0b00000)
 lcd.createChar(0, degree_char)
 
-pin = Pin(28, Pin.OUT, Pin.PULL_DOWN)
-sensor = DHT11(pin)
+button_pin = Pin(13, Pin.IN, Pin.PULL_UP)
+button_pin.irq(trigger=Pin.IRQ_FALLING, handler=switch_display_callback)
+
+dht_pin = Pin(28, Pin.OUT, Pin.PULL_DOWN)
+sensor = DHT11(dht_pin)
 while True:
     time.sleep(1)
-    sensor = DHT11(pin)
-    t = (sensor.temperature)
-    h = (sensor.humidity)
-    lcd.clear()
-    lcd.setCursor(0, 0)
-    lcd.print("T: {}".format(t))
-    lcd.write(0)
-    lcd.print("C")
-    lcd.setCursor(0, 1)
-    lcd.print("H: {}%".format(h))
+    if should_display_time:
+        current_time = time.localtime()
+        lcd.clear()
+        lcd.setCursor(0, 0)
+        lcd.print("{}:{}:{}".format(current_time[3] + 1, current_time[4], current_time[5]))
+        lcd.setCursor(0, 1)
+        lcd.print("{}/{}/{}".format(current_time[2], current_time[1], current_time[0]))
+    else:
+        sensor = DHT11(dht_pin)
+        t = (sensor.temperature)
+        h = (sensor.humidity)
+        lcd.clear()
+        lcd.setCursor(0, 0)
+        lcd.print("T: {}".format(t))
+        lcd.write(0)
+        lcd.print("C")
+        lcd.setCursor(0, 1)
+        lcd.print("H: {}%".format(h))
 
