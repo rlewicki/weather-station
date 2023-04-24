@@ -120,10 +120,22 @@ def await_http_connection():
         print(request)
         
         request = str(request)
-        html = "temperatura: {}C, wilgotnosc: {}%, data: {}".format(
+        html = """<!DOCTYPE html>
+        <html>
+        <header>
+        <meta charset="UTF-8">
+        </header>
+        <body>
+        <h1>Stacja Pogodowa</h1>
+        <h3>Godzina: {}</h3>
+        <h3>Temperature w środku: {}°C</h3>
+        <h3>Wilgotność w środku: {}%</h3>
+        </body>
+        </html>
+        """.format(
+            current_date,
             inside_temperature, 
-            inside_humidity,
-            current_date)
+            inside_humidity)
         response = html
         cl.send("HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n")
         cl.send(response)
