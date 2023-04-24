@@ -2,6 +2,8 @@ import time
 from machine import Pin
 from grove_lcd import Grove_RGB_LCD
 from dht11 import DHT11
+from dht11 import InvalidChecksum
+from dht11 import InvalidPulseCount
 from base64 import b64encode
 import network
 import ntptime
@@ -28,18 +30,8 @@ def switch_display_callback(pin):
     should_display_time = not should_display_time
 
 print("Booting up")
-
-lcd = Grove_RGB_LCD(16, 2, 0)
-lcd.home()
-lcd.noBlink()
-lcd.noCursor()
-lcd.print("Booting up")
-
 time.sleep(1)
-
-lcd.clear()
-lcd.setCursor(0, 0)
-lcd.print("Network init")
+print("Network init")
 
 ssid = ""
 password = ""
@@ -66,40 +58,28 @@ print("{}:{}:{}, {}/{}/{}".format(
     current_time[1], 
     current_time[0]))
 
-degree_char = bytearray(0)
-degree_char.append(0b00010)
-degree_char.append(0b00101)
-degree_char.append(0b00010)
-degree_char.append(0b00000)
-degree_char.append(0b00000)
-degree_char.append(0b00000)
-degree_char.append(0b00000)
-degree_char.append(0b00000)
-lcd.createChar(0, degree_char)
-
 button_pin = Pin(13, Pin.IN, Pin.PULL_UP)
 button_pin.irq(trigger=Pin.IRQ_FALLING, handler=switch_display_callback)
 
-dht_pin = Pin(28, Pin.OUT, Pin.PULL_DOWN)
+dht_pin = Pin(28)
 sensor = DHT11(dht_pin)
+sensor_errors_count = 0
 while True:
-    time.sleep(1)
     if should_display_time:
         current_time = time.localtime()
-        lcd.clear()
-        lcd.setCursor(0, 0)
-        lcd.print("{}:{}:{}".format(current_time[3] + 1, current_time[4], current_time[5]))
-        lcd.setCursor(0, 1)
-        lcd.print("{}/{}/{}".format(current_time[2], current_time[1], current_time[0]))
+        print("{}:{}:{}".format(current_time[3] + 1, current_time[4], current_time[5]))
+        time.sleep(1)
     else:
-        sensor = DHT11(dht_pin)
-        t = (sensor.temperature)
-        h = (sensor.humidity)
-        lcd.clear()
-        lcd.setCursor(0, 0)
-        lcd.print("T: {}".format(t))
-        lcd.write(0)
-        lcd.print("C")
-        lcd.setCursor(0, 1)
-        lcd.print("H: {}%".format(h))
-
+        try:
+            sensor.measure()
+            t = sensor._temperature
+            h = sensor._humidity
+            print("T: {}C".format(t))
+            print("H: {}%".format(h))
+            time.sleep(5)
+        except InvalidChecksum as e:
+            sensor_errors_count += 1
+            print("DHT11 sensor error: invalid checksum")
+        except InvalidPulseCount as e:
+            sensor_errors_count += 1
+            print("DHT11 sensor error: invalid pulse count")
