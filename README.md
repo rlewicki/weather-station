@@ -9,3 +9,6 @@ All files that are on a Pico microcontroller are inside `pico` folder.
 
 ### Backend
 All files for the backend server are inside `server` folder.
+
+# External services
+- Weather data powered by: https://open-meteo.com/en
