@@ -28,3 +28,6 @@ purchase an e-ink display that only requires 3.3V. However given that all data
 will be available via web app this is not a necessity at the moment. Updated the
 circuit diagram to match current state of the circuit. I also had to add a pull up
 resistor to make the DHT11 sensor more stable.
+
+### 2 June 2023
+TBD

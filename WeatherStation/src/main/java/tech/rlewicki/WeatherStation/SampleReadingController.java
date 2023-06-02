@@ -9,7 +9,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +43,7 @@ public class SampleReadingController {
         }
 
         String headerChecksum = header.get(headerEntry);
-        if (!verifyChecksum(headerChecksum, body, secretKey)) {
+        if (!verifySignature(headerChecksum, body, secretKey)) {
             System.out.println(headerEntry + " mismatch");
             return 400;
         }
@@ -56,7 +55,7 @@ public class SampleReadingController {
         return 200;
     }
 
-    private static boolean verifyChecksum(String requestChecksum, Map<String, String> body, String privateKey) {
+    private static boolean verifySignature(String requestChecksum, Map<String, String> body, String privateKey) {
         final String encodingAlgorithm = "HmacSHA256";
         try {
             Mac hmac = Mac.getInstance(encodingAlgorithm);
