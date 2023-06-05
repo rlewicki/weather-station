@@ -99,7 +99,7 @@ def send_local_readings():
     signature = signature.digest()
     header = {"content-type": "application/json", "x-signature-sha256": signature.hex()}
     response = urequests.post(url, headers=header, data=body)
-    print("Sent local readings to server, received response: " + str(response))
+    print("Sent local readings to server, received response: " + response.text)
 
 def update_data():
     global inside_temperature
