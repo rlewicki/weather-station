@@ -22,5 +22,7 @@ public class SampleReading {
         this.humidity = humidity;
     }
 
-    public SampleReading() {}
+    public SampleReading() {
+        this.date = LocalDateTime.now();
+    }
 }

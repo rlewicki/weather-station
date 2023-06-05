@@ -37,7 +37,7 @@ with open("password.txt", "r") as f:
     
 with open("secret_key.txt", "r") as f:
     secret_key = f.read()
-    
+
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect(ssid, password)
@@ -76,7 +76,7 @@ def get_current_date():
 
 def get_temperature_and_humidity():
     sensor.measure()
-    return sensor._temperature, sensor._humidity
+    return round(sensor._temperature, 1), round(sensor._humidity, 1)
 
 global inside_temperature
 global inside_humidity
@@ -88,14 +88,14 @@ current_date = ""
 
 def send_local_readings():
     url = server_base_address + server_api_insert
-    body = ujson.dumps({ "date": current_date, "temperature": inside_temperature, "humidity": inside_humidity})
+    temperature_text = str(inside_temperature)
+    humidity_text = str(inside_humidity)
+    body = ujson.dumps({ "temperature": temperature_text, "humidity": humidity_text})
     signature = hmac.new(bytes(secret_key, "utf-8"), digestmod=hashlib.sha256)
-    signature.update("date".encode())
-    signature.update(current_date)
     signature.update("temperature".encode())
-    signature.update(str(inside_temperature).encode())
+    signature.update(temperature_text.encode())
     signature.update("humidity".encode())
-    signature.update(str(inside_humidity).encode())
+    signature.update(humidity_text.encode())
     signature = signature.digest()
     header = {"content-type": "application/json", "x-signature-sha256": signature.hex()}
     response = urequests.post(url, headers=header, data=body)
@@ -114,7 +114,7 @@ def update_data():
         except InvalidPulseCount as e:
             pass
         send_local_readings()
-        time.sleep(30)
+        time.sleep(5)
 
 while True:
     update_data()

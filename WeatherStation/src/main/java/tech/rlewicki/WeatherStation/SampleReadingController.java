@@ -61,10 +61,10 @@ public class SampleReadingController {
             Mac hmac = Mac.getInstance(encodingAlgorithm);
             SecretKeySpec keySpec = new SecretKeySpec(privateKey.getBytes(), encodingAlgorithm);
             hmac.init(keySpec);
-            for (Map.Entry<String, String> entry : body.entrySet()) {
-                hmac.update(entry.getKey().getBytes());
-                hmac.update(entry.getValue().getBytes());
-            }
+            hmac.update("temperature".getBytes());
+            hmac.update(body.get("temperature").getBytes());
+            hmac.update("humidity".getBytes());
+            hmac.update(body.get("humidity").getBytes());
             byte[] checksumBytes = hmac.doFinal();
             String checksumString = Hex.encodeHexString(checksumBytes);
             return requestChecksum.equals(checksumString);
