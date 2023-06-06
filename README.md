@@ -11,6 +11,7 @@ This is code for my Raspberry Pi Pico microcontroller written in MicroPython.
 Each component of the application is in it's respective directory:
 - `pico` contains MicroPython code for the Raspberry Pi Pico microcontroller
 - `backend` contains backend code written in Java using Spring Boot framework
+- `frontend` contains Vue.js project that runs single page app that uses API exposed by the backend server
 
 # External services
 - Weather data powered by: https://open-meteo.com/en
