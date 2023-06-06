@@ -8,12 +8,9 @@ This is code for my Raspberry Pi Pico microcontroller written in MicroPython.
 ![pico-schematic](pico_schematic.png)
 
 # File structure
-
-### Pico
-Source files for Pico are inside `pico` directory.
-
-### Server
-Backend and frontend for displaying data collected from the Pico is stored inside `WeatherStation` which is a Spring Boot Java application.
+Each component of the application is in it's respective directory:
+- `pico` contains MicroPython code for the Raspberry Pi Pico microcontroller
+- `backend` contains backend code written in Java using Spring Boot framework
 
 # External services
 - Weather data powered by: https://open-meteo.com/en
