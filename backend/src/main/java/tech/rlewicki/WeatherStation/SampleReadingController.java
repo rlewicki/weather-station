@@ -35,6 +35,12 @@ public class SampleReadingController {
         return service.getAllSampleReadings();
     }
 
+    @CrossOrigin
+    @GetMapping("last_count")
+    public List<SampleReading> fetchSampleReadings(@RequestParam int count) {
+        return service.getSampleReadings(count);
+    }
+
     @PostMapping("insert_single")
     public int insertSingleSampleReading(@RequestHeader Map<String, String> header, @RequestBody Map<String, String> body) {
         if (!header.containsKey(headerEntry)) {

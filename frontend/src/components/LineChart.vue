@@ -6,7 +6,9 @@
   
 <script setup lang="ts">
 import Chart, { Colors, registerables } from 'chart.js/auto'
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
+
+console.log("beginning of line chart component")
 
 const props = defineProps<{
   id: string,
@@ -19,9 +21,11 @@ const props = defineProps<{
   chartColor: string,
 }>()
 
+const chartSamples = computed(() => props.samples)
+
 let maxSample = -999999;
 let minSample = 9999999;
-for (var sample of props.samples) {
+for (var sample of chartSamples.value) {
   if (sample < minSample) {
     minSample = sample;
   }
@@ -31,11 +35,17 @@ for (var sample of props.samples) {
   }
 }
 
+console.log("Chart title: " + props.title)
+console.log("Chart labels: ")
+console.log(props.labels)
+console.log("Chart samples: ")
+console.log(chartSamples)
+
 const data = {
   labels: props.labels,
   datasets: [{
     label: "Dataset",
-    data: props.samples,
+    data: chartSamples.value,
     fill: false,
     cubicInterpolationMode: 'monotone',
     tension: 0.4,

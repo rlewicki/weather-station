@@ -1,11 +1,46 @@
 <script setup lang="ts">
 import LineChart from '../components/LineChart.vue'
-const labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange', 'Pink', 'Test']
-const samples = [12, 19, 3, 5, 2, 3, 25, -5]
+import { ref, watchEffect } from 'vue';
+
+let loaded = ref(false)
+let labels: string[] = []
+let temperature_samples: number[] = []
+let humidity_samples: number[] = []
+
+const response = ref(null)
+watchEffect(async () => {
+  response.value = await (await fetch("http://localhost:8080/api/v1/sampleReading/last_count?count=50")).json()
+  for (let i = 0; i < response.value.length; i++) {
+    labels.push(response.value[i].date)
+    temperature_samples.push(response.value[i].temperature)
+    humidity_samples.push(response.value[i].humidity)
+  }
+  loaded.value = true
+})
 </script>
 
 <template>
   <main>
+    <section v-if="loaded">
+      <LineChart
+        id="inside_temp" 
+        title="Inside Temperature"
+        value-title="Temperature level"
+        :labels="labels" 
+        :samples="temperature_samples" 
+        :min-reading-offset="2" 
+        :max-reading-offset="2"
+        chart-color="#B31312"/>
+      <LineChart
+        id="inside_himidity" 
+        title="Inside Humidity" 
+        :labels="labels" 
+        :samples="humidity_samples"
+        value-title="Humidity level"
+        :min-reading-offset="10"
+        :max-reading-offset="10"
+        chart-color="#A1C298"/>
+    </section>
     <!-- <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
       <div class="col">
         <div class="card mb-4 rounded-3 shadow-sm">
@@ -59,23 +94,6 @@ const samples = [12, 19, 3, 5, 2, 3, 25, -5]
         </div>
       </div>
     </div> -->
-    <LineChart 
-      id="inside_temp" 
-      title="Inside Temperature"
-      value-title="Temperature level"
-      :labels="labels" 
-      :samples="samples" 
-      :min-reading-offset="2" 
-      :max-reading-offset="2"
-      chart-color="#B31312"/>
-    <LineChart 
-      id="inside_himidity" 
-      title="Inside Humidity" 
-      :labels="labels" 
-      :samples="samples"
-      value-title="Humidity level"
-      :min-reading-offset="10"
-      :max-reading-offset="10"
-      chart-color="#A1C298"/>
+    <!-- <LineChart2 /> -->
   </main>
 </template>

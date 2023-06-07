@@ -16,4 +16,14 @@ public class SampleReadingService {
     public void insertSampleReading(SampleReading sampleReading) {
         repository.insert(sampleReading);
     }
+
+    public List<SampleReading> getSampleReadings(int count) {
+        long lastIndex = repository.count() - 1;
+        long firstIndex = lastIndex - count;
+        if (firstIndex < 0) {
+            firstIndex = 0;
+        }
+
+        return repository.findAll().subList((int)firstIndex, (int)lastIndex);
+    }
 }
