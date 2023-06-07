@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Data
 @Document
@@ -23,6 +24,7 @@ public class SampleReading {
     }
 
     public SampleReading() {
-        this.date = LocalDateTime.now();
+        LocalDateTime gmtTime = LocalDateTime.now(ZoneId.of("GMT"));
+        this.date = gmtTime.plusHours(2);
     }
 }

@@ -36,6 +36,12 @@ public class SampleReadingController {
     }
 
     @CrossOrigin
+    @GetMapping("last")
+    public SampleReading fetchLastSample() {
+        return service.getLastSample();
+    }
+
+    @CrossOrigin
     @GetMapping("last_count")
     public List<SampleReading> fetchSampleReadings(@RequestParam int count) {
         return service.getSampleReadings(count);
