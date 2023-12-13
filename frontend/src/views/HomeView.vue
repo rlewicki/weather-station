@@ -15,17 +15,19 @@ let current_inside_humidity = 0
 const response = ref(null)
 watchEffect(async () => {
   response.value = await (await fetch(API_URL + API_LAST_COUNT)).json()
-  for (let i = 0; i < response.value.length; i++) {
-    labels.push(getHourAndMinuteFromDate(response.value[i].date))
-    temperature_samples.push(response.value[i].temperature)
-    humidity_samples.push(response.value[i].humidity)
+  if (response.value != null) {
+    for (let i = 0; i < response.value.length; i++) {
+      labels.push(getHourAndMinuteFromDate(response.value[i].date))
+      temperature_samples.push(response.value[i].temperature)
+      humidity_samples.push(response.value[i].humidity)
+    }
+
+    response.value = await (await fetch(API_URL + API_LAST)).json()
+    current_inside_temperature = response.value.temperature
+    current_inside_humidity = response.value.humidity
+
+    chart_data_loaded.value = true
   }
-
-  response.value = await (await fetch(API_URL + API_LAST)).json()
-  current_inside_temperature = response.value.temperature
-  current_inside_humidity = response.value.humidity
-
-  chart_data_loaded.value = true
 })
 
 function getHourAndMinuteFromDate(date: string) {
