@@ -59,6 +59,10 @@ print("{}:{}:{}, {}/{}/{}".format(
 dht_pin = Pin(28)
 sensor = DHT11(dht_pin)
 
+red_led = Pin(11, Pin.OUT, value = 1)
+yellow_led = Pin(12, Pin.OUT, value = 1)
+green_led = Pin(13, Pin.OUT, value = 1)
+
 # open_meteo_wroclaw_url = "https://api.open-meteo.com/v1/forecast?latitude=51.10&longitude=17.03&hourly=temperature_2m,relativehumidity_2m&forecast_days=1"
 # open_meteo_berlin_url = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,relativehumidity_2m&forecast_days=1"
 
@@ -98,8 +102,22 @@ def send_local_readings():
     signature.update(humidity_text.encode())
     signature = signature.digest()
     header = {"content-type": "application/json", "x-signature-sha256": signature.hex()}
-    response = urequests.post(url, headers=header, data=body)
-    print("Sent local readings to server, received response: " + response.text)
+    try:
+        response = urequests.post(url, headers=header, data=body)
+        print("Sent local readings to server, received response: " + response.text)
+    except OSError as e:
+        print(f"Failed to send readings to server, {e}")
+        
+def update_led(humidity_level):
+    red_led.off()
+    yellow_led.off()
+    green_led.off()
+    if humidity_level <= 25 or humidity_level >= 60:
+        red_led.on()
+    elif humidity_level <= 30 or humidity_level >= 55:
+        yellow_led.on()
+    else:
+        green_led.on()
 
 def update_data():
     global inside_temperature
@@ -109,12 +127,14 @@ def update_data():
         current_date = get_current_date()
         try:
             inside_temperature, inside_humidity = get_temperature_and_humidity()
+            update_led(inside_humidity)
+            send_local_readings()
         except InvalidChecksum as e:
             pass
         except InvalidPulseCount as e:
             pass
-        send_local_readings()
-        time.sleep(5)
+        time.sleep(10)
 
 while True:
     update_data()
+
